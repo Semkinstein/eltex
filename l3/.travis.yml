@@ -1,0 +1,14 @@
+dist: xemol
+os:
+    -linux
+compiler:
+    -gcc
+script:
+    make
+deploy:
+    provider: releases
+    api key: trv
+    file:
+        -brackets.c
+        -makefile
+        -out.txt
