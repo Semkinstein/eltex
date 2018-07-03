@@ -16,12 +16,12 @@ void sig_winch(int signo) {
 int file_open(WINDOW *wnd) {
     char filename[10];
     char filetext[MAX_FILE_LEN];
-    wprintw(wnd, "Input file name\n");
-    wgetnstr(wnd, filename, 10);
+    printw("Input file name\n");
+    getstr(filename);
     filename[10] = 0;
     FILE *fl = fopen(filename, "r");
-    fread(filetext, sizeof(char), MAX_FILE_LEN, fl);
-
+    //fread(filetext, sizeof(char), MAX_FILE_LEN, fl);
+    fscanf(fl, "%s", filetext);
     printw("%s", filetext);
     refresh();
 
@@ -31,15 +31,16 @@ int file_open(WINDOW *wnd) {
 
 
 
-int file_save(WINDOW *wnd, char *filename){
+int file_save(WINDOW *wnd){
+    char filename[11];
     wprintw(wnd, "Input file name\n");
-    wgetnstr(wnd, filename, 10);
+    getstr(filename);
     filename[10] = 0;
     FILE *fw = fopen(filename, "w");
     char str[MAX_FILE_LEN];
 
-    wgetstr(wnd, str);
-    fwrite(str, sizeof(char), MAX_FILE_LEN, fw);
+    getstr(str);
+    fprintf(fw ,"%s", str);
 
     fclose(fw);
     return 0;
@@ -52,17 +53,12 @@ int main(int argc, char ** argv)
     WINDOW * wnd;
     char filename[11];
     initscr();
+    keypad(stdscr, true);
     signal(SIGWINCH, sig_winch);
     curs_set(TRUE);
-    start_color();
+    wnd = newwin(15, 23, 2, 2);
+    noecho();
     refresh();
-    init_pair(1, COLOR_YELLOW, COLOR_BLUE);
-
-
-    wnd = newwin(5, 23, 2, 2);
-    keypad(wnd, 1);
-    refresh();
-
 
     int x = 0, y = 0;
     char ch;
@@ -70,7 +66,32 @@ int main(int argc, char ** argv)
     move(y, x);
     refresh();
 
-/* editing */
+    while(ch1 != KEY_F(3))
+    {
+        ch1 = getch();
+
+        switch (ch1) {
+            case KEY_F(1):
+
+                echo();
+                file_open(wnd);
+                break;
+            case KEY_F(2):
+
+                file_save(wnd);
+                break;
+
+            case KEY_F(3):
+                endwin();
+                exit(EXIT_SUCCESS);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+/* editing
     for(;;) {
         ch1 = getch();
         if (ch == 70) file_open(wnd);
@@ -86,5 +107,5 @@ int main(int argc, char ** argv)
             move(y, x++);
         }
     }
-
+    */
 }
