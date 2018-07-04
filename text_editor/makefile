@@ -1,2 +1,2 @@
 all:
-	gcc main.c -o main -lncurses
+	gcc main.c texted.c -o main -lncurses
